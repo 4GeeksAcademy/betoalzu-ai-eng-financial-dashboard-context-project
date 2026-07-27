@@ -4,7 +4,7 @@ interface DashboardHeaderProps {
   period?: string
 }
 
-export function DashboardHeader({ period = '2024 - ano completo' }: DashboardHeaderProps) {
+export function DashboardHeader({ period = 'Periodo sin datos' }: DashboardHeaderProps) {
   return (
     <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
       <div className="flex items-center gap-3">

@@ -19,13 +19,17 @@ function formatMonthYearLabel(yearMonthKey: string): string {
 }
 
 export function computeKPIs(movements: FinancialMovement[]): KPIMetrics {
-  const totalIncome = movements
-    .filter((m) => m.operation_type === "income")
-    .reduce((sum, m) => sum + m.amount, 0);
+  let totalIncome = 0;
+  let totalOutcome = 0;
 
-  const totalOutcome = movements
-    .filter((m) => m.operation_type === "outcome")
-    .reduce((sum, m) => sum + m.amount, 0);
+  for (const movement of movements) {
+    if (movement.operation_type === "income") {
+      totalIncome += movement.amount;
+      continue;
+    }
+
+    totalOutcome += movement.amount;
+  }
 
   const profit = totalIncome - totalOutcome;
   const profitPercent = totalIncome > 0 ? (profit / totalIncome) * 100 : 0;
@@ -36,25 +40,25 @@ export function computeKPIs(movements: FinancialMovement[]): KPIMetrics {
 export function computeMonthlyData(
   movements: FinancialMovement[],
 ): MonthlyDataPoint[] {
-  const monthlyMap: Record<string, { income: number; outcome: number }> = {};
+  const monthlyMap = new Map<string, { income: number; outcome: number }>();
 
-  for (const m of movements) {
-    const yearMonthKey = toYearMonthKey(new Date(m.create_date));
-    if (!monthlyMap[yearMonthKey]) {
-      monthlyMap[yearMonthKey] = { income: 0, outcome: 0 };
-    }
+  for (const movement of movements) {
+    const yearMonthKey = toYearMonthKey(new Date(movement.create_date));
+    const currentTotals = monthlyMap.get(yearMonthKey) ?? { income: 0, outcome: 0 };
 
-    if (m.operation_type === "income") {
-      monthlyMap[yearMonthKey].income += m.amount;
+    if (movement.operation_type === "income") {
+      currentTotals.income += movement.amount;
     } else {
-      monthlyMap[yearMonthKey].outcome += m.amount;
+      currentTotals.outcome += movement.amount;
     }
+
+    monthlyMap.set(yearMonthKey, currentTotals);
   }
 
-  return Object.keys(monthlyMap)
+  return Array.from(monthlyMap.entries())
     .sort()
-    .map((yearMonthKey) => {
-      const { income, outcome } = monthlyMap[yearMonthKey];
+    .map(([yearMonthKey, totals]) => {
+      const { income, outcome } = totals;
       const profit = income - outcome;
       const profitPercent = income > 0 ? (profit / income) * 100 : 0;
       return {
