@@ -12,33 +12,33 @@ export function KPIRow({ metrics, loading }: KPIRowProps) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
       <KPICard
-        label="Total Income"
+        label="Ingresos totales"
         value={metrics ? formatCurrency(metrics.totalIncome) : '—'}
-        helperText="Cumulative revenue from all income movements"
+        helperText="Ingresos acumulados de todos los movimientos"
         icon={TrendingUp}
         variant="income"
         loading={loading}
       />
       <KPICard
-        label="Total Outcome"
+        label="Egresos totales"
         value={metrics ? formatCurrency(metrics.totalOutcome) : '—'}
-        helperText="Total expenditure across all categories"
+        helperText="Gasto acumulado en todas las categorias"
         icon={TrendingDown}
         variant="outcome"
         loading={loading}
       />
       <KPICard
-        label="Profit"
+        label="Utilidad"
         value={metrics ? formatCurrency(metrics.profit) : '—'}
-        helperText="Net profit — income minus total outcome"
+        helperText="Utilidad neta: ingresos menos egresos"
         icon={DollarSign}
         variant="profit"
         loading={loading}
       />
       <KPICard
-        label="Profit Margin"
+        label="Margen de utilidad"
         value={metrics ? formatPercent(metrics.profitPercent) : '—'}
-        helperText="Profit as a percentage of total income"
+        helperText="Utilidad como porcentaje de los ingresos"
         icon={BarChart2}
         variant="profitPercent"
         loading={loading}
