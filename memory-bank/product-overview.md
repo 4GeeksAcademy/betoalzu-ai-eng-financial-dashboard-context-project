@@ -25,10 +25,11 @@ Este repositorio implementa un dashboard financiero full stack para visualizar i
   - Variantes por tipo de negocio B2B y B2C.
 
 ## Flujo de datos actual (alto nivel)
-1. El frontend llama a `/api/metrics` al montar la aplicacion.
-2. Convierte los movimientos en KPIs agregados y serie mensual.
-3. Renderiza tarjetas KPI y graficos con esos datos.
-4. Si falla la llamada HTTP, muestra un mensaje de error en pantalla.
+1. `App.tsx` delega carga y transformacion al hook `useFinancialDashboardData`.
+2. El servicio `fetchFinancialMovements` llama a `/api/metrics` y normaliza errores de red/HTTP/contrato.
+3. `parseFinancialMovements` valida el payload runtime antes de computar KPIs o series.
+4. El hook calcula KPIs y agregacion mensual y expone estado `loading/error`.
+5. La UI renderiza KPIs y graficos (lazy-loaded) con manejo de loading/empty/error.
 
 ## Evidencia verificable
 - Definicion de producto y stack base:
@@ -39,6 +40,9 @@ Este repositorio implementa un dashboard financiero full stack para visualizar i
   - `docker-compose.yml`
 - Flujo frontend (fetch, estado, render):
   - `frontend/src/App.tsx`
+  - `frontend/src/lib/use-financial-dashboard-data.ts`
+  - `frontend/src/lib/financial-service.ts`
+  - `frontend/src/lib/financial-parser.ts`
 - Componentes visuales del dashboard:
   - `frontend/src/components/dashboard/dashboard-header.tsx`
   - `frontend/src/components/dashboard/kpi-row.tsx`
